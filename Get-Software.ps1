@@ -88,8 +88,6 @@ process
 
     function Get-Software($WmiSoft)
     {
-
-
         #Get the data from Registry, select and rename fields
         $Software = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object @{Name='Name'; Expression={$_.DisplayName}}, @{Name='Version'; Expression={$_.DisplayVersion}}, Publisher, InstallDate, InstallSource, InstallLocation, @{Name='PSComputerName'; Expression={$env:computername}}
 
@@ -104,7 +102,6 @@ process
         $Software = $Software | Sort-Object Name -Unique
         return $Software
     }
-
 
     #---------------------MAIN--------------------------
 
@@ -122,7 +119,6 @@ process
             #Collect all data using PSRemoting
             if($PSRemoting)
             {
-        
                     Write-Verbose "Using PSRemoting"
                     $Software += Invoke-Command -ComputerName $Computer -ScriptBlock ${function:Get-Software} -ArgumentList $WmiSoft
 
@@ -149,7 +145,6 @@ process
             }
             #Dedup Software on Current Computer based on Name
             $MasterSoftware+= $software | Sort-Object Name -Unique
-        
         }
     }
     else
@@ -162,4 +157,3 @@ end
     #Output the Software List, only those that are not null.
     $MasterSoftware | Where-Object { $_.Name -NE $Null }
 }
-
